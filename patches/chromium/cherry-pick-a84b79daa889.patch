@@ -1,0 +1,38 @@
+From 9e71945971536e7511d8efd016f8d0918689f4ed Mon Sep 17 00:00:00 2001
+From: Alexander Dunaev <adunaev@igalia.com>
+Date: Tue, 28 Dec 2021 14:02:05 +0000
+Subject: [PATCH 2/2] [linux/wayland] Fixed terminate caused by binding to
+ wrong version.
+
+This is a fixup to [1] where a typo creeped in.
+
+[1] https://chromium-review.googlesource.com/c/chromium/src/+/3337037
+
+Bug: 1279574
+Change-Id: If8f1a308ce8d27b51a9cd4d52ad8eec2e29edf95
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/3358254
+Reviewed-by: Antonio Gomes <tonikitoo@igalia.com>
+Commit-Queue: Alexander Dunaev <adunaev@igalia.com>
+Auto-Submit: Alexander Dunaev <adunaev@igalia.com>
+Cr-Commit-Position: refs/heads/main@{#954286}
+(cherry picked from commit a84b79daa8897b822336b8f348ef4daaae07af37)
+---
+ ui/ozone/platform/wayland/host/wayland_drm.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ui/ozone/platform/wayland/host/wayland_drm.cc b/ui/ozone/platform/wayland/host/wayland_drm.cc
+index a7ed2e20ffe0a..b10b79412e569 100644
+--- a/ui/ozone/platform/wayland/host/wayland_drm.cc
++++ b/ui/ozone/platform/wayland/host/wayland_drm.cc
+@@ -32,7 +32,7 @@ void WaylandDrm::Instantiate(WaylandConnection* connection,
+   DCHECK_EQ(interface, kInterfaceName);
+ 
+   if (connection->drm_ ||
+-      !!wl::CanBind(interface, version, kMinVersion, kMinVersion)) {
++      !wl::CanBind(interface, version, kMinVersion, kMinVersion)) {
+     return;
+   }
+ 
+-- 
+2.20.1
+
