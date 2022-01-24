@@ -1,8 +1,7 @@
-From 9e71945971536e7511d8efd016f8d0918689f4ed Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Alexander Dunaev <adunaev@igalia.com>
 Date: Tue, 28 Dec 2021 14:02:05 +0000
-Subject: [PATCH 2/2] [linux/wayland] Fixed terminate caused by binding to
- wrong version.
+Subject: Fixed terminate caused by binding to wrong version.
 
 This is a fixup to [1] where a typo creeped in.
 
@@ -16,12 +15,9 @@ Commit-Queue: Alexander Dunaev <adunaev@igalia.com>
 Auto-Submit: Alexander Dunaev <adunaev@igalia.com>
 Cr-Commit-Position: refs/heads/main@{#954286}
 (cherry picked from commit a84b79daa8897b822336b8f348ef4daaae07af37)
----
- ui/ozone/platform/wayland/host/wayland_drm.cc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/ui/ozone/platform/wayland/host/wayland_drm.cc b/ui/ozone/platform/wayland/host/wayland_drm.cc
-index a7ed2e20ffe0a..b10b79412e569 100644
+index a7ed2e20ffe0a1aba0de1505e8ffbc4e64b83cc5..b10b79412e5692ea2e2b6c254561d2c8ddb37a41 100644
 --- a/ui/ozone/platform/wayland/host/wayland_drm.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_drm.cc
 @@ -32,7 +32,7 @@ void WaylandDrm::Instantiate(WaylandConnection* connection,
@@ -33,6 +29,3 @@ index a7ed2e20ffe0a..b10b79412e569 100644
      return;
    }
  
--- 
-2.20.1
-

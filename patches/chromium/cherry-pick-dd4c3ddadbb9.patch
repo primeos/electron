@@ -1,8 +1,7 @@
-From 6260a880412728c9c0f6695cc2700454b6dc7ad9 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Alexander Dunaev <adunaev@igalia.com>
 Date: Tue, 14 Dec 2021 09:54:52 +0000
-Subject: [PATCH 1/2] [linux/wayland] Fixed terminate caused by binding to
- wrong version.
+Subject: Fixed terminate caused by binding to wrong version.
 
 The Ozone/Wayland implementation had a few places where the Wayland
 objects were bound without proper checking for their versions.  That was
@@ -21,30 +20,9 @@ Reviewed-by: Maksim Sisov <msisov@igalia.com>
 Commit-Queue: Alexander Dunaev <adunaev@igalia.com>
 Cr-Commit-Position: refs/heads/main@{#951428}
 (cherry picked from commit dd4c3ddadbb9869f59cee201a38e9ca3b9154f4d)
----
- .../platform/wayland/common/wayland_object.cc | 21 +++++++++++++++++++
- .../platform/wayland/common/wayland_object.h  | 11 ++++++++++
- .../gtk_primary_selection_device_manager.cc   | 11 +++++-----
- ui/ozone/platform/wayland/host/gtk_shell1.cc  | 12 ++++++-----
- .../wayland/host/org_kde_kwin_idle.cc         |  9 ++++----
- .../wayland/host/overlay_prioritizer.cc       |  9 ++++----
- .../host/wayland_data_device_manager.cc       |  9 +++++---
- ui/ozone/platform/wayland/host/wayland_drm.cc |  6 ++++--
- .../platform/wayland/host/wayland_output.cc   | 10 ++++-----
- ui/ozone/platform/wayland/host/wayland_shm.cc |  9 ++++----
- .../wayland/host/wayland_zaura_shell.cc       |  9 +++++---
- .../wayland/host/wayland_zcr_cursor_shapes.cc | 10 +++++----
- .../wayland/host/wayland_zwp_linux_dmabuf.cc  |  9 +++++---
- .../host/wayland_zwp_pointer_constraints.cc   |  6 +++---
- .../host/wayland_zwp_pointer_gestures.cc      |  7 ++++---
- .../wayland_zwp_relative_pointer_manager.cc   |  8 ++++---
- .../wayland/host/xdg_foreign_wrapper.cc       | 14 ++++++++-----
- .../wayland/host/zwp_idle_inhibit_manager.cc  | 10 +++++----
- .../zwp_primary_selection_device_manager.cc   |  9 ++++----
- 19 files changed, 124 insertions(+), 65 deletions(-)
 
 diff --git a/ui/ozone/platform/wayland/common/wayland_object.cc b/ui/ozone/platform/wayland/common/wayland_object.cc
-index e97d5264e47b4..a6ba798e2bd82 100644
+index e97d5264e47b47985e55e2d6da999a75c2ae8306..a6ba798e2bd82eb33e66460b3f77780d3c040f39 100644
 --- a/ui/ozone/platform/wayland/common/wayland_object.cc
 +++ b/ui/ozone/platform/wayland/common/wayland_object.cc
 @@ -34,6 +34,8 @@
@@ -83,7 +61,7 @@ index e97d5264e47b4..a6ba798e2bd82 100644
      &wl_cursor_theme_destroy;
  
 diff --git a/ui/ozone/platform/wayland/common/wayland_object.h b/ui/ozone/platform/wayland/common/wayland_object.h
-index 145c0137b59cc..f929b6ecffe7d 100644
+index 145c0137b59ccca68984a39d3b89dfcb80da58bf..f929b6ecffe7d2b84b0bfe3e2ee760e36e19ed42 100644
 --- a/ui/ozone/platform/wayland/common/wayland_object.h
 +++ b/ui/ozone/platform/wayland/common/wayland_object.h
 @@ -79,6 +79,17 @@ struct ObjectTraits<wl_proxy> {
@@ -105,7 +83,7 @@ index 145c0137b59cc..f929b6ecffe7d 100644
  
  // Puts the forward declaration for struct TYPE and declares the template
 diff --git a/ui/ozone/platform/wayland/host/gtk_primary_selection_device_manager.cc b/ui/ozone/platform/wayland/host/gtk_primary_selection_device_manager.cc
-index af3087d1891ff..2991233fe6ec4 100644
+index af3087d1891ffbd556959c2c6283f3a2df8c7634..2991233fe6ec4a34d15fc9b40865bc1ba8e3e23f 100644
 --- a/ui/ozone/platform/wayland/host/gtk_primary_selection_device_manager.cc
 +++ b/ui/ozone/platform/wayland/host/gtk_primary_selection_device_manager.cc
 @@ -16,7 +16,7 @@
@@ -136,7 +114,7 @@ index af3087d1891ff..2991233fe6ec4 100644
      LOG(ERROR) << "Failed to bind gtk_primary_selection_device_manager";
      return;
 diff --git a/ui/ozone/platform/wayland/host/gtk_shell1.cc b/ui/ozone/platform/wayland/host/gtk_shell1.cc
-index cb3b0c8fa024e..26dfd7fbf3f40 100644
+index cb3b0c8fa024e021aa676a6a1c498ae0b350175b..26dfd7fbf3f403d9291b0721d1712b188eb39fc7 100644
 --- a/ui/ozone/platform/wayland/host/gtk_shell1.cc
 +++ b/ui/ozone/platform/wayland/host/gtk_shell1.cc
 @@ -17,8 +17,8 @@ namespace {
@@ -168,7 +146,7 @@ index cb3b0c8fa024e..26dfd7fbf3f40 100644
      LOG(ERROR) << "Failed to bind gtk_shell1";
      return;
 diff --git a/ui/ozone/platform/wayland/host/org_kde_kwin_idle.cc b/ui/ozone/platform/wayland/host/org_kde_kwin_idle.cc
-index 4746aa798c0f7..8b7a7416d955a 100644
+index 4746aa798c0f7faecae286be761b8ede00b5cb01..8b7a7416d955a0f66aadaf2d69b3fd43a5b86c3e 100644
 --- a/ui/ozone/platform/wayland/host/org_kde_kwin_idle.cc
 +++ b/ui/ozone/platform/wayland/host/org_kde_kwin_idle.cc
 @@ -13,7 +13,7 @@ namespace ui {
@@ -197,7 +175,7 @@ index 4746aa798c0f7..8b7a7416d955a 100644
      LOG(ERROR) << "Failed to bind to org_kde_kwin_idle global";
      return;
 diff --git a/ui/ozone/platform/wayland/host/overlay_prioritizer.cc b/ui/ozone/platform/wayland/host/overlay_prioritizer.cc
-index e8aaf39a3374c..11496b52324a8 100644
+index e8aaf39a3374c264e79e83557bc509f7849033eb..11496b52324a8ace33de6c82abb59f26e7bd5591 100644
 --- a/ui/ozone/platform/wayland/host/overlay_prioritizer.cc
 +++ b/ui/ozone/platform/wayland/host/overlay_prioritizer.cc
 @@ -12,7 +12,7 @@
@@ -226,7 +204,7 @@ index e8aaf39a3374c..11496b52324a8 100644
      LOG(ERROR) << "Failed to bind overlay_prioritizer";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_data_device_manager.cc b/ui/ozone/platform/wayland/host/wayland_data_device_manager.cc
-index 408cb1c72f474..0f03942e6991a 100644
+index 408cb1c72f474cbb78de4a3f2939666bd0d2da40..0f03942e6991a475b974ad86f1ceb79b550f7119 100644
 --- a/ui/ozone/platform/wayland/host/wayland_data_device_manager.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_data_device_manager.cc
 @@ -14,7 +14,8 @@
@@ -256,7 +234,7 @@ index 408cb1c72f474..0f03942e6991a 100644
      LOG(ERROR) << "Failed to bind to wl_data_device_manager global";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_drm.cc b/ui/ozone/platform/wayland/host/wayland_drm.cc
-index d806e8e9f5de0..a7ed2e20ffe0a 100644
+index d806e8e9f5de04943caf14af86077a8cd0b3040e..a7ed2e20ffe0a1aba0de1505e8ffbc4e64b83cc5 100644
 --- a/ui/ozone/platform/wayland/host/wayland_drm.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_drm.cc
 @@ -17,7 +17,7 @@
@@ -281,7 +259,7 @@ index d806e8e9f5de0..a7ed2e20ffe0a 100644
    auto wl_drm = wl::Bind<struct wl_drm>(registry, name, version);
    if (!wl_drm) {
 diff --git a/ui/ozone/platform/wayland/host/wayland_output.cc b/ui/ozone/platform/wayland/host/wayland_output.cc
-index 7f5289197bc76..fc41f9a12f5a1 100644
+index 7f5289197bc76d5808014cbf8c33bf99538c68dc..fc41f9a12f5a1062393ac36f1b53fb4824cf409c 100644
 --- a/ui/ozone/platform/wayland/host/wayland_output.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_output.cc
 @@ -16,7 +16,8 @@
@@ -312,7 +290,7 @@ index 7f5289197bc76..fc41f9a12f5a1 100644
      LOG(ERROR) << "Failed to bind to wl_output global";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_shm.cc b/ui/ozone/platform/wayland/host/wayland_shm.cc
-index 7c6cd40569d74..de97ad1c2b22a 100644
+index 7c6cd40569d74fbc6a9a332c4913a79858eda1db..de97ad1c2b22a12df51fb8a3fae0f01578ce8f5d 100644
 --- a/ui/ozone/platform/wayland/host/wayland_shm.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_shm.cc
 @@ -10,7 +10,7 @@
@@ -341,7 +319,7 @@ index 7c6cd40569d74..de97ad1c2b22a 100644
      LOG(ERROR) << "Failed to bind to wl_shm global";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_zaura_shell.cc b/ui/ozone/platform/wayland/host/wayland_zaura_shell.cc
-index a9e723769879a..9aaef1354f8c6 100644
+index a9e723769879af72519c44a8a8081252e38474b6..9aaef1354f8c6f74f203b6e77e8d36847ce2449e 100644
 --- a/ui/ozone/platform/wayland/host/wayland_zaura_shell.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_zaura_shell.cc
 @@ -18,7 +18,8 @@
@@ -371,7 +349,7 @@ index a9e723769879a..9aaef1354f8c6 100644
      LOG(ERROR) << "Failed to bind zaura_shell";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_zcr_cursor_shapes.cc b/ui/ozone/platform/wayland/host/wayland_zcr_cursor_shapes.cc
-index 094a2f98686c6..84d847eea16ae 100644
+index 094a2f98686c6d79bdac7faf779c8f499c8d662d..84d847eea16ae518326d35e3719299a8166efe94 100644
 --- a/ui/ozone/platform/wayland/host/wayland_zcr_cursor_shapes.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_zcr_cursor_shapes.cc
 @@ -16,7 +16,7 @@
@@ -401,7 +379,7 @@ index 094a2f98686c6..84d847eea16ae 100644
      LOG(ERROR) << "Failed to bind zcr_cursor_shapes_v1";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_zwp_linux_dmabuf.cc b/ui/ozone/platform/wayland/host/wayland_zwp_linux_dmabuf.cc
-index 7035dc4ed26ff..cee793b9ae808 100644
+index 7035dc4ed26ff977cf567890c665e96e02230ba7..cee793b9ae808496abb854b0a98fec5b798dd815 100644
 --- a/ui/ozone/platform/wayland/host/wayland_zwp_linux_dmabuf.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_zwp_linux_dmabuf.cc
 @@ -14,7 +14,8 @@
@@ -431,7 +409,7 @@ index 7035dc4ed26ff..cee793b9ae808 100644
      LOG(ERROR) << "Failed to bind zwp_linux_dmabuf_v1";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_zwp_pointer_constraints.cc b/ui/ozone/platform/wayland/host/wayland_zwp_pointer_constraints.cc
-index 24e4dacc7eeb6..c1aca770ff5be 100644
+index 24e4dacc7eeb6a2ed6e9b4cf0ba10d32f95fc116..c1aca770ff5be1579546c27660c7e24437ea001a 100644
 --- a/ui/ozone/platform/wayland/host/wayland_zwp_pointer_constraints.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_zwp_pointer_constraints.cc
 @@ -15,7 +15,7 @@
@@ -459,7 +437,7 @@ index 24e4dacc7eeb6..c1aca770ff5be 100644
      LOG(ERROR) << "Failed to bind wp_pointer_constraints_v1";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_zwp_pointer_gestures.cc b/ui/ozone/platform/wayland/host/wayland_zwp_pointer_gestures.cc
-index 5d96c8923fda1..31bffb726c6ea 100644
+index 5d96c8923fda1cadd1d8f76bfaf562e213798c86..31bffb726c6ea9332b11c805e62171067e333538 100644
 --- a/ui/ozone/platform/wayland/host/wayland_zwp_pointer_gestures.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_zwp_pointer_gestures.cc
 @@ -19,7 +19,7 @@
@@ -487,7 +465,7 @@ index 5d96c8923fda1..31bffb726c6ea 100644
      LOG(ERROR) << "Failed to bind wp_pointer_gestures_v1";
      return;
 diff --git a/ui/ozone/platform/wayland/host/wayland_zwp_relative_pointer_manager.cc b/ui/ozone/platform/wayland/host/wayland_zwp_relative_pointer_manager.cc
-index 3a8ef4c7f9612..c84a891dfe733 100644
+index 3a8ef4c7f9612d9d913d356d43a13ef9b27565fd..c84a891dfe7336e64f45606d0acbbb13fc49c5c0 100644
 --- a/ui/ozone/platform/wayland/host/wayland_zwp_relative_pointer_manager.cc
 +++ b/ui/ozone/platform/wayland/host/wayland_zwp_relative_pointer_manager.cc
 @@ -14,7 +14,7 @@
@@ -516,7 +494,7 @@ index 3a8ef4c7f9612..c84a891dfe733 100644
      LOG(ERROR) << "Failed to bind zwp_relative_pointer_manager_v1";
      return;
 diff --git a/ui/ozone/platform/wayland/host/xdg_foreign_wrapper.cc b/ui/ozone/platform/wayland/host/xdg_foreign_wrapper.cc
-index a34b684d12883..2586adf9b857c 100644
+index a34b684d12883d12954b88d3392c0d4f9e4124ba..2586adf9b857cee162a62e2b1e6ab31ef14e5aba 100644
 --- a/ui/ozone/platform/wayland/host/xdg_foreign_wrapper.cc
 +++ b/ui/ozone/platform/wayland/host/xdg_foreign_wrapper.cc
 @@ -19,6 +19,8 @@ constexpr char XdgForeignWrapper::kInterfaceNameV1[];
@@ -552,7 +530,7 @@ index a34b684d12883..2586adf9b857c 100644
      NOTREACHED() << " unexpected interface name: " << interface;
    }
 diff --git a/ui/ozone/platform/wayland/host/zwp_idle_inhibit_manager.cc b/ui/ozone/platform/wayland/host/zwp_idle_inhibit_manager.cc
-index 47121293acb7a..fc05de68778b9 100644
+index 47121293acb7a4ba7f347f763a280d04b2717a70..fc05de68778b95f1eb2ca82935504ee31e13d684 100644
 --- a/ui/ozone/platform/wayland/host/zwp_idle_inhibit_manager.cc
 +++ b/ui/ozone/platform/wayland/host/zwp_idle_inhibit_manager.cc
 @@ -12,7 +12,7 @@
@@ -582,7 +560,7 @@ index 47121293acb7a..fc05de68778b9 100644
      LOG(ERROR) << "Failed to bind zwp_idle_inhibit_manager_v1";
      return;
 diff --git a/ui/ozone/platform/wayland/host/zwp_primary_selection_device_manager.cc b/ui/ozone/platform/wayland/host/zwp_primary_selection_device_manager.cc
-index f6f9fd23c35df..795a09c056576 100644
+index f6f9fd23c35df8a0e0b80b96d9cc594ce841f923..795a09c05657683174f8e55b3a09e78395e3d9d8 100644
 --- a/ui/ozone/platform/wayland/host/zwp_primary_selection_device_manager.cc
 +++ b/ui/ozone/platform/wayland/host/zwp_primary_selection_device_manager.cc
 @@ -16,7 +16,7 @@
@@ -611,6 +589,3 @@ index f6f9fd23c35df..795a09c056576 100644
    if (!manager) {
      LOG(ERROR) << "Failed to bind zwp_primary_selection_device_manager_v1";
      return;
--- 
-2.20.1
-
